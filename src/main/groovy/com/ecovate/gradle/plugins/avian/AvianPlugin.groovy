@@ -20,11 +20,12 @@ class AvianPlugin implements Plugin<Project> {
 	}
 	
 	private static String adjustPlatform(pltfrm) {
-		switch(pltfrm.replaceAll(' ', '').toLowerCase()) {
-		case ~/.*linux.*/: return 'linux'
-		case ~/.*osx.*/:   return 'darwin'
-		case ~/.*win.*/:   return 'windows'
-		default:           return pltfrm
+		switch(pltfrm.toLowerCase()) {
+		case ~/.*linux.*/:  return 'linux'
+		case ~/.*darwin.*/: return 'darwin'
+		case ~/.*mac.*/:    return 'darwin'
+		case ~/.*win.*/:    return 'windows'
+		default:            return pltfrm
 		}
 	}
 
