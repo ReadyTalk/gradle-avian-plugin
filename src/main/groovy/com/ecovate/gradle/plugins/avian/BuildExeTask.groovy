@@ -129,8 +129,14 @@ class BuildExeTask extends AvianTask {
 		}
 		
 		logger.lifecycle "building $dir/boot-jar.o"
+		
+		File bto = new File("$avian/binaryToObject")
+		if(bto.isDirectory()) {
+			bto = new File(bto, 'binaryToObject')
+		}
+		
 		runCommand([
-			"$avian/binaryToObject", "$dir/boot.jar", "$dir/boot-jar.o",
+			"$bto", "$dir/boot.jar", "$dir/boot-jar.o",
 			'_binary_boot_jar_start', '_binary_boot_jar_end',
 			platform, arch
 		])

@@ -124,7 +124,11 @@ class AvianPlugin implements Plugin<Project> {
 			avianVersion = project.hasProperty('avianVersion') ? project.avianVersion : defaultAvianVersion
 		}
 
-		avian = project.file("build/avian/$platform-$arch")
+		if(project.hasProperty('avian-location')) {
+			avian = new File(project.getProperty('avian-location'))
+		} else {
+			avian = project.file("build/avian/$platform-$arch")
+		}
 		stage1 = project.file('build/stage1')
 
 		if(!library) {

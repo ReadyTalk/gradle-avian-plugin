@@ -22,9 +22,11 @@ class InitAvianTask extends AvianTask {
 	@TaskAction
 	protected void run() {
 		stage1.mkdirs()
-		project.copy {
-			from tree(project.configurations.compile.findAll{it.name.contains('avian') && it.name.endsWith('.tar.gz')}.first())
-			into project.file('build/avian')
+		if( ! project.hasProperty('avian-location')) {
+			project.copy {
+				from tree(project.configurations.compile.findAll{it.name.contains('avian') && it.name.endsWith('.tar.gz')}.first())
+				into project.file('build/avian')
+			}
 		}
 		runCommand(['cp', "$avian/classpath.jar", "$stage1/boot.jar"])
 
