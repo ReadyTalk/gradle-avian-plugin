@@ -1,5 +1,7 @@
 package com.ecovate.gradle.plugins.avian
 
+import java.text.SimpleDateFormat;
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
@@ -42,8 +44,11 @@ class AvianPlugin implements Plugin<Project> {
 
 	private String platform
 	private String arch
+	
+	private String name
 	private String version
-
+	private String fullVersion
+	
 	private String mainClass
 	private String avianVersion
 
@@ -52,12 +57,13 @@ class AvianPlugin implements Plugin<Project> {
 	private File stage2
 	private File output
 	
-	private AvianTask initAvianTask, buildExeTask
+	private AvianTask initAvianTask, initVersionTask, buildExeTask
 
 	@Override
 	public void apply(Project project) {
 		this.project = project
 		this.logger = project.logger
+		
 		setBuildProps()
 		
 		project.plugins.apply(JavaPlugin.class)
@@ -65,10 +71,17 @@ class AvianPlugin implements Plugin<Project> {
 		project.metaClass.tree << { obj -> return this.tree(project.file(obj)) }
 		
 		project.task('setup') << { setup() }
+		
 		initAvianTask = project.task('initAvian',
 			group: AVIAN_GROUP,
 			description: "Initializes the Avian classpath",
 			type: InitAvianTask
+		)
+		
+		initVersionTask = project.task('initVersion',
+			group: AVIAN_GROUP,
+			description: "Initializes the Application version",
+			type: InitVersionTask
 		)
 		
 		buildExeTask = project.task('buildExe',
@@ -79,6 +92,7 @@ class AvianPlugin implements Plugin<Project> {
 		
 		project.tasks.initAvian.dependsOn   project.tasks.setup
 		project.tasks.compileJava.dependsOn project.tasks.initAvian
+		project.tasks.compileJava.dependsOn project.tasks.initVersion
 		project.tasks.assemble.dependsOn project.tasks.buildExe
 		project.tasks.buildExe.dependsOn project.tasks.initAvian
 		project.tasks.buildExe.dependsOn project.tasks.jar
@@ -101,7 +115,16 @@ class AvianPlugin implements Plugin<Project> {
 	private void setup() {
 		platform = project.platform
 		arch = project.arch
-		version = project.version
+		
+		name = project.hasProperty('executable.name') ? project.property('executable.name') : project.name
+		version = project.hasProperty('executable.version') ? project.property('executable.version') : project.version
+		if(version.endsWith('.qualifier')) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss")
+			version = version.substring(0, version.length()-10)
+			fullVersion = version + '.v' + sdf.format(new Date())
+		} else {
+			fullVersion = version
+		}
 
 		if(library == null) {
 			library = (project.hasProperty('library') && project.library) ? true : false;
@@ -137,6 +160,7 @@ class AvianPlugin implements Plugin<Project> {
 		}
 		
 		initAvianTask.init()
+		initVersionTask.init()
 		buildExeTask.init()
 
 		initAvianTask.addDependencies()

@@ -10,11 +10,13 @@ class InitAvianTask extends AvianTask {
 
 	@Override
 	protected void addDependencies() {
-		project.dependencies {
-			if(platform.equals('darwin')) {
-				compile "com.ecovate.avian-darwin-x86_64:avian-$platform-$arch:$avianVersion@tar.gz"
-			} else {
-				compile "com.ecovate.avian-linux-x86_64:avian-$platform-$arch:$avianVersion@tar.gz"
+		if( ! project.hasProperty('avian-location')) {
+			project.dependencies {
+				if(platform.equals('darwin')) {
+					compile "com.ecovate.avian-darwin-x86_64:avian-$platform-$arch:$avianVersion@tar.gz"
+				} else {
+					compile "com.ecovate.avian-linux-x86_64:avian-$platform-$arch:$avianVersion@tar.gz"
+				}
 			}
 		}
 	}

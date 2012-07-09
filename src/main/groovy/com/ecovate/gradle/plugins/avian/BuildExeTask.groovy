@@ -157,7 +157,7 @@ class BuildExeTask extends AvianTask {
 	}
 
 	private void createNixExe(dir) {
-		String outFile = "$output/gui-$version"
+		String outFile = "$output/${project.avian.name}_$fullVersion"
 		logger.lifecycle "building executable: $outFile"
 		output.mkdirs()
 

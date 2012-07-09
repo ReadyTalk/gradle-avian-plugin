@@ -11,7 +11,6 @@ abstract class AvianTask extends DefaultTask {
 
 	public static final String JAVA_HOME = System.getProperty('java.home')
 	
-	
 	protected String mainClass
 	protected boolean library
 	
@@ -20,6 +19,7 @@ abstract class AvianTask extends DefaultTask {
 	protected String platform
 	protected String arch
 	protected String version
+	protected String fullVersion
 	protected String avianVersion
 	protected String avian
 	protected File stage1
@@ -40,8 +40,9 @@ abstract class AvianTask extends DefaultTask {
 		
 		platform = project.avian.platform
 		arch = project.avian.arch
-		
+
 		version = project.avian.version
+		fullVersion = project.avian.fullVersion
 		avianVersion = project.avian.avianVersion
 		
 		proguard = project.avian.proguard
