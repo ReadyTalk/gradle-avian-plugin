@@ -172,7 +172,7 @@ class BuildExeTask extends AvianTask {
 	}
 	
 	private void createWinExe(dir) {
-		String outFile = "$output/gui-${version}.exe"
+		String outFile = "$output/${project.avian.name}_${fullVersion}.exe"
 		logger.lifecycle "building executable: $outFile"
 		output.mkdirs()
 
