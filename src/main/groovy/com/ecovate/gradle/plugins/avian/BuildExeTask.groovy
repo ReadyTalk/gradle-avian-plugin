@@ -208,58 +208,6 @@ class BuildExeTask extends AvianTask {
 		}
 	}
 
-	private void createWin32ExeFromLinux(dir) {
-		/**
-		 * 
-		 * DEAD CODE
-		 * 
-		 */
-
-		String out = "$output/gui-${version}.exe"
-		logger.lifecycle "building executable: $out"
-		output.mkdirs()
-
-		if(platformResources.exists()) {
-			runCommand([
-				'x86_64-w64-mingw32-windres', '--target', 'pe-i386',
-				"$platformResources/icon.rc", '-O', 'coff', '-o', "$platformResources/icon.res"
-			])
-		}
-
-		
-		def defFile = project.file("build/gui-${version}.def")
-		def expFile = project.file("build/gui-${version}.exp")
-		
-		def dllCmd = [ 'x86_64-w64-mingw32-dlltool', '-mi386', '--as-flags=--32', '-z', defFile ]
-		project.fileTree(vmFiles, { include '*.o' }).each { file ->
-			dllCmd << file
-		}
-		project.fileTree(dir, { include '*.o' }).each { file ->
-			dllCmd << file
-		}
-		runCommand(dllCmd)
-
-		
-		runCommand([ 'x86_64-w64-mingw32-dlltool', '-mi386', '--as-flags=--32', '-d', defFile, '-e', expFile ])
-
-				
-		def lnkCmd = [
-			'x86_64-w64-mingw32-gcc', '-m32', '-march=i586', 
-			expFile
-		]
-		project.fileTree(vmFiles, { include '*.o' }).each { file ->
-			lnkCmd << file
-		}
-		project.fileTree(dir, { include '*.o' }).each { file ->
-			lnkCmd << file
-		}
-		lnkCmd << "-L$platformFiles/lib"
-		lnkCmd << '-lz' << '-lm' << '-lole32' << '-lws2_32' << '-lurlmon' << '-luuid'
-		lnkCmd << '-Wl,--kill-at' << '-mwindows'
-		lnkCmd << '-o' << out
-		runCommand(lnkCmd)
-	}
-
 	@TaskAction
 	protected void run() {
 		if(!library) {
