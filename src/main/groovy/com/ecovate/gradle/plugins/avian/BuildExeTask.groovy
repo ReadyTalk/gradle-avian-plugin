@@ -8,6 +8,7 @@ import org.gradle.api.tasks.TaskAction
 
 class BuildExeTask extends AvianTask {
 
+	String outFile
 	File platformFiles
 	File platformResources
 	
@@ -110,6 +111,10 @@ class BuildExeTask extends AvianTask {
 	}
 
 	private void createExe(File dir) {
+		outFile = "$output/${project.avian.name}_${fullVersion}_$arch"
+		if(platform.equals('windows')) {
+			outFile += '.exe'
+		}
 		if(platform.equals('windows') && buildPlatform.equals('linux')) {
 			setupPlatformFiles()
 		}
@@ -157,7 +162,6 @@ class BuildExeTask extends AvianTask {
 	}
 
 	private void createNixExe(dir) {
-		String outFile = "$output/${project.avian.name}_$fullVersion"
 		logger.lifecycle "building executable: $outFile"
 		output.mkdirs()
 
@@ -172,7 +176,6 @@ class BuildExeTask extends AvianTask {
 	}
 	
 	private void createWinExe(dir) {
-		String outFile = "$output/${project.avian.name}_${fullVersion}.exe"
 		logger.lifecycle "building executable: $outFile"
 		output.mkdirs()
 
